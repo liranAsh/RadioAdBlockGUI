@@ -1,0 +1,84 @@
+<div *ngIf="freqs.length > 0">
+
+  <!-- Title and buttons -->
+  <md-grid-list cols="7" rowHeight="100px">
+    <md-grid-tile colspan="1">
+      <button md-raised-button color="primary" (click)="navigateSettings()" >
+        הגדרות
+      </button>
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+      <button md-raised-button color="primary" (click)="navigateUploadSongs()" >
+        בחר שירים
+      </button>
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+      <button md-raised-button color="primary" (click)="openRecordDialog()" >
+        הקלט פרסומת
+      </button>
+    </md-grid-tile>
+    <md-grid-tile colspan="2">
+    </md-grid-tile>
+    <md-grid-tile colspan="2">
+      <h1 class="title">תצוגת תדרים</h1>
+    </md-grid-tile>
+  </md-grid-list>
+
+    <!-- Main row -->
+    <md-grid-list cols="9" rowHeight="20px" dir="rtl">
+      <md-grid-tile colspan="1">
+        תדר
+      </md-grid-tile>
+      <md-grid-tile colspan="1">
+      </md-grid-tile>
+      <md-grid-tile colspan="1">
+        עדיפות
+      </md-grid-tile>
+      <md-grid-tile colspan="1">
+      </md-grid-tile>
+      <md-grid-tile colspan="1">
+       ללא פרסומות
+      </md-grid-tile>
+      <md-grid-tile colspan="1">
+      </md-grid-tile>
+      <md-grid-tile colspan="1">
+        מושמע כעת
+      </md-grid-tile>
+      <md-grid-tile colspan="4">
+      </md-grid-tile>
+    </md-grid-list>
+
+  <!-- Frequencies -->
+  <md-grid-list cols="9" rowHeight="20px" dir="rtl" *ngFor="let freqRow of freqs">
+    <md-grid-tile colspan="1">
+      {{freqRow.freq}}
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+      {{freqRow.priority}}
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+      {{!freqRow.isAdTransmit}}
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+      {{freqRow.isPlay}}
+    </md-grid-tile>
+    <md-grid-tile colspan="4">
+    </md-grid-tile>
+  </md-grid-list>
+
+    <!-- Start or stop button -->
+    <button md-raised-button color="accent" (click)="startOrStop()">
+     הפעל
+    </button>
+
+</div>
+
+<div *ngIf="freqs.length === 0">
+  <empty-freqs></empty-freqs>
+</div>

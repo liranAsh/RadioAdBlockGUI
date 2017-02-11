@@ -3,6 +3,14 @@
  */
 const {app, BrowserWindow } = require('electron');
 
+require('electron-context-menu')({
+    prepend: (params, browserWindow) => [{
+    label: 'Rainbow',
+    // only show it when right-clicking images
+    visible: params.mediaType === 'image'
+  }]
+});
+
 // browser-window creates a native window
 let mainWindow = null;
 

@@ -14,24 +14,21 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
     styleUrls: ['./app.theme.scss'],
     encapsulation: ViewEncapsulation.None,
     template: `
-    <div [class.m2app-dark]="isDarkTheme">
-        <main>
-            <router-outlet></router-outlet>
-            <br/>
-            <md-slide-toggle (change)="isDarkTheme = !isDarkTheme" [checked]="isDarkTheme" color="primary">
-                Set Dark theme2
-            </md-slide-toggle>
-        </main>
-    </div>
+    <!--<div [class.m2app-dark]="isDarkTheme">-->
+        <!--<main>-->
+            <!--<router-outlet></router-outlet>-->
+            <!--<br/>-->
+            <!--<md-slide-toggle (change)="isDarkTheme = !isDarkTheme" [checked]="isDarkTheme" color="primary">-->
+                <!--Set Dark theme2-->
+            <!--</md-slide-toggle>-->
+        <!--</main>-->
+    <!--</div>-->
+    <router-outlet></router-outlet>
     `
 })
 export class AppComponent implements OnInit {
-    //component initialization
-    isDarkTheme: boolean = false;
 
     ngOnInit() {
         //check authentication
     }
-
-    checkAuthentication() { }
 }

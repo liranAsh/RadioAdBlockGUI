@@ -1,0 +1,57 @@
+<!-- Title and add button -->
+<md-grid-list cols="4" rowHeight="100px">
+  <md-grid-tile colspan="1">
+    <!--<button md-raised-button color="primary" (click)="addFreq()" >-->
+      <!--הוסף-->
+    <!--</button>-->
+    <input [hidden]="true" id="input-file-id" multiple type="file" #fileUploadInput/>
+    <button md-raised-button color="primary"  for="input-file-id" (click)="clickUpload()">
+    הוסף
+    </button>
+
+  </md-grid-tile>
+  <md-grid-tile colspan="2">
+  </md-grid-tile>
+  <md-grid-tile colspan="1">
+    <h1 class="title">רשימת שירים</h1>
+  </md-grid-tile>
+</md-grid-list>
+
+<h2 dir="rtl" *ngIf="songs.length === 0">לא קיימים שירים ברשימה, על מנת להוסיף לחץ על 'הוסף'</h2>
+
+
+<!-- Table content -->
+<form #settingsForm="ngForm">
+
+  <!-- Row -->
+  <md-grid-list cols="9" rowHeight="100px" dir="rtl" *ngFor="let song of songs; let i=index;">
+    <md-grid-tile colspan="3">
+      {{song.path}}
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+      <md-input-container style="width: 100%;">
+        <input type="number" md-input placeholder="עדיפות"
+               [(ngModel)]="song.priority" name="priority-{{i}}" #priority="ngModel"
+               required>
+        <md-hint *ngIf="!priority.valid && !priority.pristine" [ngStyle]="{'color': 'red'}" align="start">ערך חובה</md-hint>
+      </md-input-container>
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+      <!--<button md-mini-fab><md-icon>check</md-icon></button>-->
+      <button md-mini-fab color="warn" (click)="removeFreq(i)">מחק</button>
+    </md-grid-tile>
+    <md-grid-tile colspan="2">
+    </md-grid-tile>
+  </md-grid-list>
+
+  <!-- Save -->
+  <button md-raised-button color="accent" (click)="saveAndNavigate()" [disabled]="!settingsForm.form.valid">
+    שמור
+  </button>
+
+</form>
+
