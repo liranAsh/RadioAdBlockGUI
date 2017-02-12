@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, Input, AfterViewInit} from "@angular/core";
 
 /**
  * Created by Liran on 11/02/2017.
@@ -10,57 +10,78 @@ import {Component, OnInit} from "@angular/core";
 })
 export class RecorderComponent implements OnInit {
 
+  @Input("startRecordLabel") startRecordLabel: string;
+  @Input() stopRecordLabel: string;
+  public isRecording: boolean;
   private recorder: any;
   private staticRecorder: any;
 
   public ngOnInit(): void {
-    debugger;
 
-    let config: any = {
-      callback: () => {
-        debugger;
-        console.log("asdas");
-      }
-    };
-
+    this.isRecording = false;
     this.staticRecorder = require("recorderjs");
 
     let startUserMedia = (stream) => {
       let audio_context = new AudioContext;
       let input = audio_context.createMediaStreamSource(stream);
 
-      this.recorder = new this.staticRecorder(input, config);
-    }
+      this.recorder = new this.staticRecorder(input);
+    };
 
     navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
       console.log('No live audio input: ' + e);
     });
-
-
-
   }
 
   public record(): void {
     this.recorder.record();
+    this.isRecording = true;
   }
 
   public stopRecord(): void {
     this.recorder.stop();
-    this.recorder.exportWAV((a,b,c) => {
-      debugger;
+    this.isRecording = false;
 
-      let fs = require("fs");
-      let fileReader = new FileReader();
-      fileReader.onload = function(r: Event) {
-        debugger;
-        fs.writeFileSync('test.wav', Buffer.from((r.currentTarget as FileReader).result as ArrayBuffer));
+    this.recorder.exportWAV((inputBlob) => {
+
+
+      // let fs = require("fs");
+      // let fileReader = new FileReader();
+      // fileReader.onload = function(r: Event) {
+      //
+      //   fs.writeFileSync('test.wav', Buffer.from((r.currentTarget as FileReader).result as ArrayBuffer));
+      // };
+      // fileReader.readAsArrayBuffer(a);
+
+      let blobToBase64 = (blob, callback) => {
+
+        let reader = new FileReader();
+        reader.onload = () => {
+
+          let dataUrl = reader.result;
+          let base64 = dataUrl.split(',')[1];
+          callback(base64);
+        };
+        reader.readAsDataURL(blob);
       };
-      fileReader.readAsArrayBuffer(a);
+
+      blobToBase64(inputBlob, (base64Blob) => {
+
+        let buf = new Buffer(base64Blob, "base64");
+        let fs = require("fs");
+        fs.writeFile("temp/test.wav", buf, (err) => {
+
+          if(err) {
+            console.log(err);
+          } else {
+            // Show client a message that record has been succeeded
+            console.log("Success");
+          }
+        })
+      });
+
+
       console.log("export file as wav by deafult");
     })
-  }
-
-  public saveFiles(): void {
-
   }
 }

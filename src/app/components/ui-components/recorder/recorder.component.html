@@ -1,7 +1,4 @@
-<div>
-  <button (click)="record()">start</button>
-</div>
-<div>
-  <button (click)="stopRecord()">stop</button>
-</div>
+<button *ngIf="!isRecording" md-raised-button color="primary" (click)="record()">{{startRecordLabel}}</button>
+<button *ngIf="isRecording" md-raised-button color="primary" (click)="stopRecord()">{{stopRecordLabel}}</button>
+
 

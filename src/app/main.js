@@ -2,6 +2,7 @@
  * Include our app
  */
 const {app, BrowserWindow } = require('electron');
+let path = require("path");
 
 require('electron-context-menu')({
     prepend: (params, browserWindow) => [{
@@ -24,7 +25,8 @@ app.on('window-all-closed', () => {
 
 const createWindow = () => {
   // Initialize the window to our specified dimensions
-  mainWindow = new BrowserWindow({ width: 1200, height: 900 });
+  mainWindow = new BrowserWindow({ width: 1200, height: 900, icon: path.join(__dirname, "../assets/radio-icon.png") });
+  mainWindow.setMenu(null);
 
   // Tell Electron where to load the entry point from
   mainWindow.loadURL('file://' + __dirname + '/index.html');
