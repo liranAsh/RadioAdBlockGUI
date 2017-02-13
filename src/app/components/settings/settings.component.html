@@ -1,14 +1,14 @@
 <!-- Title and add button -->
-<md-grid-list cols="4" rowHeight="100px">
+<md-grid-list cols="12" rowHeight="150px" dir="rtl">
+  <md-grid-tile colspan="2">
+    <h1 class="title">הגדרת תדרים</h1>
+  </md-grid-tile>
+  <md-grid-tile colspan="9">
+  </md-grid-tile>
   <md-grid-tile colspan="1">
     <button md-raised-button color="primary" (click)="addFreq()" >
-      הוסף
+      <md-icon>add</md-icon>
     </button>
-  </md-grid-tile>
-  <md-grid-tile colspan="2">
-  </md-grid-tile>
-  <md-grid-tile colspan="1">
-    <h1 class="title">הגדרת תדרים</h1>
   </md-grid-tile>
 </md-grid-list>
 
@@ -17,7 +17,9 @@
 <form #settingsForm="ngForm">
 
   <!-- Row -->
-  <md-grid-list cols="9" rowHeight="100px" dir="rtl" *ngFor="let freqRow of freqs; let i=index;">
+  <md-grid-list cols="15" rowHeight="50px" dir="rtl" *ngFor="let freqRow of freqs; let i=index;">
+    <md-grid-tile colspan="1">
+    </md-grid-tile>
     <md-grid-tile colspan="1">
       <md-input-container style="width: 100%;">
         <input type="number" md-input placeholder="תדר"
@@ -40,16 +42,22 @@
     </md-grid-tile>
     <md-grid-tile colspan="1">
       <!--<button md-mini-fab><md-icon>check</md-icon></button>-->
-      <button md-mini-fab color="warn" (click)="removeFreq(i)">מחק</button>
+      <button *ngIf="freqs.length > 1" md-mini-fab color="warn" (click)="removeFreq(i)"><md-icon>cancel</md-icon></button>
     </md-grid-tile>
-    <md-grid-tile colspan="4">
+    <md-grid-tile colspan="8">
     </md-grid-tile>
   </md-grid-list>
 
   <!-- Save -->
-  <button md-raised-button color="accent" (click)="saveAndNavigate()" [disabled]="!settingsForm.form.valid">
-    שמור
-  </button>
+  <md-grid-list cols="12" rowHeight="100px" dir="rtl">
+    <md-grid-tile colspan="11">
+    </md-grid-tile>
+    <md-grid-tile colspan="1">
+      <button md-raised-button color="accent" (click)="saveAndNavigate()" [disabled]="!settingsForm.form.valid">
+        שמור
+      </button>
+    </md-grid-tile>
+  </md-grid-list>
 
 </form>
 

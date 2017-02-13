@@ -1,8 +1,10 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, ViewChild} from "@angular/core";
 import {SavedFrequency, FrequenciesService} from "../../services/frequencies.service";
 import {MdIconRegistry} from "@angular/material";
 import {DomSanitizer} from "@angular/platform-browser";
 import {Router} from "@angular/router";
+import {Frequency} from "../../models/frequency";
+import {NgForm} from "@angular/forms";
 /**
  * Created by Liran on 11/02/2017.
  */
@@ -12,7 +14,8 @@ import {Router} from "@angular/router";
 })
 export class SettingsComponent implements OnInit {
 
-  private freqs: SavedFrequency[];
+  @ViewChild("settingsForm") public settingsForm: NgForm;
+  private freqs: Frequency[];
 
   constructor(private freqsService: FrequenciesService,
               private iconRegistry: MdIconRegistry,
@@ -25,15 +28,33 @@ export class SettingsComponent implements OnInit {
 
 
     let savedFreqs: SavedFrequency[] = this.freqsService.getFreqs().concat([]);
-    this.freqs = (savedFreqs.length > 0) ? savedFreqs : [{freq: undefined, priority: undefined}];
+
+    this.freqs = [];
+
+    if (savedFreqs.length > 0) {
+      savedFreqs.forEach((freq: SavedFrequency) => this.freqs.push(new Frequency(freq.freq, freq.priority)));
+    } else {
+      this.freqs.push(new Frequency(undefined, undefined));
+    }
   }
 
   public addFreq(): void {
-    this.freqs.push({freq: undefined, priority: undefined});
+    console.log("Controls: ");
+    console.log(this.settingsForm.form.controls);
+
+    console.log("is valid ?");
+    console.log(this.settingsForm.form.valid);
+    // console.log("Form errors: ");
+    this.freqs.push(new Frequency(undefined, undefined));
   }
 
   public removeFreq(index: number) {
     this.freqs.splice(index, 1);
+    console.log("Controls: ");
+    console.log(this.settingsForm.form.controls);
+
+    console.log("is valid ?");
+    console.log(this.settingsForm.form.valid);
   }
 
   public saveAndNavigate() {
