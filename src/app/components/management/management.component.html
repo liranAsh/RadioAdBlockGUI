@@ -1,97 +1,112 @@
-<div *ngIf="freqs.length > 0">
+<div *ngIf="isApplicationLoadFreqs">
 
-  <!-- Title and buttons -->
-  <md-grid-list cols="7" rowHeight="150px">
-    <md-grid-tile colspan="1">
-      <button md-raised-button color="primary" (click)="navigateSettings()" >
-        הגדרות
-      </button>
-    </md-grid-tile>
-    <md-grid-tile colspan="1">
-      <button md-raised-button color="primary" (click)="navigateUploadSongs()" >
-        בחר שירים
-      </button>
-    </md-grid-tile>
-    <md-grid-tile colspan="1">
-      <!--<button md-raised-button color="primary" (click)="openRecordDialog()" >-->
-        <!--הקלט פרסומת-->
-      <!--</button>-->
-      <recorder startRecordLabel="הקלט פרסומת" stopRecordLabel="הפסק"></recorder>
-    </md-grid-tile>
-    <md-grid-tile colspan="2">
-    </md-grid-tile>
-    <md-grid-tile colspan="2">
-      <h1 class="title">תצוגת תדרים</h1>
-    </md-grid-tile>
-  </md-grid-list>
+  <div *ngIf="freqs.length > 0">
+
+    <!-- Title and buttons -->
+    <md-grid-list cols="7" rowHeight="150px" dir="rtl">
+
+      <md-grid-tile colspan="2">
+        <h1 class="title">תצוגת תדרים</h1>
+      </md-grid-tile>
+
+      <md-grid-tile colspan="1">
+        <button md-raised-button color="primary" (click)="navigateUploadSongs()" >
+          בחר שירים
+        </button>
+      </md-grid-tile>
+
+      <md-grid-tile colspan="1">
+        <button md-raised-button color="primary" (click)="navigateSettings()" >
+          הגדרות
+        </button>
+      </md-grid-tile>
+
+      <md-grid-tile colspan="1">
+        <button md-raised-button color="primary" (click)="executeOrKillMatlabFile(false)" >
+          <span *ngIf="!isRunningRecord && !isLoadingRecord">הקלט פרסומת</span>
+          <span *ngIf="isRunningRecord && !isLoadingRecord">הפסק</span>
+        </button>
+        <md-spinner *ngIf="isRunningRecord && isLoadingRecord"></md-spinner>
+      </md-grid-tile>
+
+      <md-grid-tile colspan="2">
+        <ad-state (state)="onAdStateChange($event)"></ad-state>
+      </md-grid-tile>
+
+    </md-grid-list>
 
     <!-- Main row -->
-    <md-grid-list cols="9" rowHeight="50px" dir="rtl">
+    <md-grid-list class="marginTable" cols="9" rowHeight="50px" dir="rtl">
       <md-grid-tile colspan="1">
-        תדר
+        <h2>תדר</h2>
       </md-grid-tile>
       <md-grid-tile colspan="1">
+        <h2>עדיפות</h2>
+      </md-grid-tile>
+      <md-grid-tile colspan="2">
+        <h2>ללא פרסומות</h2>
       </md-grid-tile>
       <md-grid-tile colspan="1">
-        עדיפות
-      </md-grid-tile>
-      <md-grid-tile colspan="1">
-      </md-grid-tile>
-      <md-grid-tile colspan="1">
-       ללא פרסומות
-      </md-grid-tile>
-      <md-grid-tile colspan="1">
-      </md-grid-tile>
-      <md-grid-tile colspan="1">
-        מושמע כעת
+        <h2>מושמע כעת</h2>
       </md-grid-tile>
       <md-grid-tile colspan="4">
       </md-grid-tile>
     </md-grid-list>
 
-  <!-- Frequencies -->
-  <md-grid-list cols="9" rowHeight="20px" dir="rtl" *ngFor="let freqRow of freqs">
-    <md-grid-tile colspan="1">
-      {{freqRow.freq}}
-    </md-grid-tile>
-    <md-grid-tile colspan="1">
-    </md-grid-tile>
-    <md-grid-tile colspan="1">
-      {{freqRow.priority}}
-    </md-grid-tile>
-    <md-grid-tile colspan="1">
-    </md-grid-tile>
-    <md-grid-tile colspan="1">
-      <span *ngIf="isRunning">
-        {{!freqRow.isAdTransmit}}
+    <!-- Frequencies -->
+    <md-grid-list cols="9" rowHeight="40px" dir="rtl" *ngFor="let freqRow of freqs">
+      <md-grid-tile colspan="1">
+        {{freqRow.freq}}
+      </md-grid-tile>
+      <md-grid-tile colspan="1">
+        {{freqRow.priority}}
+      </md-grid-tile>
+      <md-grid-tile colspan="2">
+      <span *ngIf="isRunningAlgorithm && !isLoadingAlgorithm">
+        <md-icon *ngIf="freqRow.isAdTransmit === false">check</md-icon>
+        <md-icon *ngIf="freqRow.isAdTransmit === true">clear</md-icon>
       </span>
-    </md-grid-tile>
-    <md-grid-tile colspan="1">
-    </md-grid-tile>
-    <md-grid-tile colspan="1">
-      <span *ngIf="isRunning">
-        {{freqRow.isPlay}}
+      </md-grid-tile>
+      <md-grid-tile colspan="1">
+      <span *ngIf="isRunningAlgorithm && !isLoadingAlgorithm">
+        <md-icon *ngIf="freqRow.isPlay">volume_up</md-icon>
       </span>
-    </md-grid-tile>
-    <md-grid-tile colspan="4">
-    </md-grid-tile>
-  </md-grid-list>
+      </md-grid-tile>
+      <md-grid-tile colspan="4">
+      </md-grid-tile>
+    </md-grid-list>
 
     <!-- Start or stop button -->
-  <md-grid-list cols="7" rowHeight="250px">
-    <md-grid-tile colspan="1">
-      <button md-raised-button color="accent" (click)="executeOrKillMatlabFile()">
-        <span *ngIf="!isRunning">הפעל</span>
-        <span *ngIf="isRunning">הפסק</span>
-      </button>
-    </md-grid-tile>
-    <md-grid-tile colspan="6">
-    </md-grid-tile>
-  </md-grid-list>
+    <md-grid-list cols="7" rowHeight="250px" dir="rtl">
 
+      <md-grid-tile colspan="6">
+      </md-grid-tile>
+
+      <md-grid-tile colspan="1">
+        <button md-raised-button color="accent" (click)="executeOrKillMatlabFile(true)">
+          <span *ngIf="!isRunningAlgorithm && !isLoadingAlgorithm">הפעל</span>
+          <span *ngIf="isRunningAlgorithm && !isLoadingAlgorithm">הפסק</span>
+        </button>
+        <md-spinner *ngIf="isRunningAlgorithm && isLoadingAlgorithm"></md-spinner>
+      </md-grid-tile>
+
+    </md-grid-list>
+
+
+  </div>
+
+  <div *ngIf="freqs.length === 0">
+    <empty-freqs></empty-freqs>
+  </div>
 
 </div>
 
-<div *ngIf="freqs.length === 0">
-  <empty-freqs></empty-freqs>
+<div *ngIf="!isApplicationLoadFreqs">
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+        <md-spinner></md-spinner>
+      </div>
+    </div>
+  </div>
 </div>

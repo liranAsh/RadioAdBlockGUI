@@ -24,41 +24,29 @@ export class SettingsComponent implements OnInit {
 
   public ngOnInit(): void {
 
-    // Register icon
+    this.freqsService.getFreqs().then((savedFreqs: SavedFrequency[]) => {
 
-
-    let savedFreqs: SavedFrequency[] = this.freqsService.getFreqs().concat([]);
-
-    this.freqs = [];
-
-    if (savedFreqs.length > 0) {
-      savedFreqs.forEach((freq: SavedFrequency) => this.freqs.push(new Frequency(freq.freq, freq.priority)));
-    } else {
-      this.freqs.push(new Frequency(undefined, undefined));
-    }
+      this.freqs = [];
+      if (savedFreqs.length > 0) {
+        savedFreqs.forEach((freq: SavedFrequency) => this.freqs.push(new Frequency(freq.freq, freq.priority)));
+      } else {
+        this.freqs.push(new Frequency(undefined, undefined));
+      }
+    });
   }
 
   public addFreq(): void {
-    console.log("Controls: ");
-    console.log(this.settingsForm.form.controls);
-
-    console.log("is valid ?");
-    console.log(this.settingsForm.form.valid);
-    // console.log("Form errors: ");
     this.freqs.push(new Frequency(undefined, undefined));
   }
 
   public removeFreq(index: number) {
     this.freqs.splice(index, 1);
-    console.log("Controls: ");
-    console.log(this.settingsForm.form.controls);
-
-    console.log("is valid ?");
-    console.log(this.settingsForm.form.valid);
   }
 
   public saveAndNavigate() {
-    this.freqsService.save(this.freqs);
-    this.router.navigate(["management"]);
+    this.freqsService.save(this.freqs).then(() => {
+
+      this.router.navigate(["management"]);
+    });
   }
 }

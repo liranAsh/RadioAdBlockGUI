@@ -25,7 +25,7 @@ app.on('window-all-closed', () => {
 
 const createWindow = () => {
   // Initialize the window to our specified dimensions
-  mainWindow = new BrowserWindow({ width: 1200, height: 900, icon: path.join(__dirname, "../assets/radio-icon.png") });
+  mainWindow = new BrowserWindow({ width: 1050, height: 700, icon: path.join(__dirname, "../assets/radio-icon.ico") });
   mainWindow.setMenu(null);
 
   // Tell Electron where to load the entry point from

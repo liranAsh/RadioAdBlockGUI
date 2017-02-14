@@ -22,20 +22,22 @@ export class SongsComponent implements OnInit {
 
   public ngOnInit(): void {
 
-    let savedSongs: Song[] = this.songsService.getSongs().concat([]);
-    this.songs = (savedSongs.length > 0) ? savedSongs : [];
+    this.songsService.getSongs().then((savedSongs: Song[]) => {
+      this.songs = (savedSongs.length > 0) ? savedSongs.concat([]) : [];
+    });
 
     this.fileUploadInput.nativeElement.addEventListener("change", (e: Event) => {
-      this.songs.push(new Song((e.currentTarget as HTMLInputElement).value));
+      let fileList: FileList = (e.currentTarget as any).files;
+
+      for (let i: number = 0; i < fileList.length; i++) {
+        let file: File = fileList[i];
+        this.songs.push(new Song(file.name, (file as any).path));
+      }
     })
   }
 
   public clickUpload(): void {
     this.fileUploadInput.nativeElement.click();
-  }
-
-  public addSong(song: Song): void {
-    this.songs.push(song);
   }
 
   public removeFreq(index: number) {

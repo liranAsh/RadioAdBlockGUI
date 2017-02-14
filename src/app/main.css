@@ -6,3 +6,24 @@
   float: right;
   color: #6A1B9A;
 }
+.removeIcon {
+  cursor: pointer;
+}
+.outer {
+  display: table;
+  position: absolute;
+  height: 80%;
+  width: 99%;
+}
+
+.middle {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.inner {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  text-align: center;
+}

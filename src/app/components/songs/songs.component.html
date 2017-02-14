@@ -1,32 +1,32 @@
 <!-- Title and add button -->
-<md-grid-list cols="4" rowHeight="100px">
+<md-grid-list cols="7" rowHeight="150px" dir="rtl">
+
+  <md-grid-tile colspan="2">
+    <h1 class="title">רשימת שירים</h1>
+  </md-grid-tile>
+
+  <md-grid-tile colspan="4">
+  </md-grid-tile>
+
   <md-grid-tile colspan="1">
-    <!--<button md-raised-button color="primary" (click)="addFreq()" >-->
-      <!--הוסף-->
-    <!--</button>-->
-    <input [hidden]="true" id="input-file-id" multiple type="file" #fileUploadInput/>
+    <input [hidden]="true" id="input-file-id" multiple type="file" accept=".mp3" #fileUploadInput/>
     <button md-raised-button color="primary"  for="input-file-id" (click)="clickUpload()">
     הוסף
     </button>
+  </md-grid-tile>
 
-  </md-grid-tile>
-  <md-grid-tile colspan="2">
-  </md-grid-tile>
-  <md-grid-tile colspan="1">
-    <h1 class="title">רשימת שירים</h1>
-  </md-grid-tile>
 </md-grid-list>
 
-<h2 dir="rtl" *ngIf="songs.length === 0">לא קיימים שירים ברשימה, על מנת להוסיף לחץ על 'הוסף'</h2>
+<h2 dir="rtl" *ngIf="!(songs?.length)">לא קיימים שירים ברשימה, על מנת להוסיף לחץ על 'הוסף'</h2>
 
 
 <!-- Table content -->
-<form #settingsForm="ngForm">
+<form #songsForm="ngForm">
 
   <!-- Row -->
   <md-grid-list cols="9" rowHeight="100px" dir="rtl" *ngFor="let song of songs; let i=index;">
     <md-grid-tile colspan="3">
-      {{song.path}}
+      {{song.name}}
     </md-grid-tile>
     <md-grid-tile colspan="1">
     </md-grid-tile>
@@ -41,17 +41,26 @@
     <md-grid-tile colspan="1">
     </md-grid-tile>
     <md-grid-tile colspan="1">
-      <!--<button md-mini-fab><md-icon>check</md-icon></button>-->
-      <button md-mini-fab color="warn" (click)="removeFreq(i)">מחק</button>
+      <md-icon (click)="removeFreq(i)" class="removeIcon">cancel</md-icon>
     </md-grid-tile>
     <md-grid-tile colspan="2">
     </md-grid-tile>
   </md-grid-list>
 
   <!-- Save -->
-  <button md-raised-button color="accent" (click)="saveAndNavigate()" [disabled]="!settingsForm.form.valid">
-    שמור
-  </button>
+  <md-grid-list cols="7" rowHeight="250px" dir="rtl">
+
+    <md-grid-tile colspan="6">
+    </md-grid-tile>
+
+    <md-grid-tile colspan="1">
+      <button type="button" md-raised-button color="accent" (click)="saveAndNavigate()" [disabled]="!songsForm.form.valid">
+        שמור
+      </button>
+    </md-grid-tile>
+
+  </md-grid-list>
+
 
 </form>
 

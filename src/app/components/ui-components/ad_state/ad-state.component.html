@@ -1,0 +1,29 @@
+<md-button-toggle-group #group="mdButtonToggleGroup" (change)="onChange(group)" value="0">
+  <!--<md-button-toggle value="left">-->
+    <!--<md-icon>format_align_left</md-icon>-->
+  <!--</md-button-toggle>-->
+  <!--<md-button-toggle value="center">-->
+    <!--<md-icon>format_align_center</md-icon>-->
+  <!--</md-button-toggle>-->
+  <!--<md-button-toggle value="right">-->
+    <!--<md-icon>format_align_right</md-icon>-->
+  <!--</md-button-toggle>-->
+  <!--<md-button-toggle value="justify" disabled>-->
+    <!--<md-icon>format_align_justify</md-icon>-->
+  <!--</md-button-toggle>-->
+  <md-button-toggle value="{{states.REGULAR}}" title="השמע רגיל">
+    <md-icon>volume_up</md-icon>
+  </md-button-toggle>
+  <md-button-toggle value="{{states.LOW_SOUND}}" title="הנמך">
+    <md-icon>volume_down</md-icon>
+  </md-button-toggle>
+  <md-button-toggle value="{{states.SWITCH_STATION}}" title="החלף תחנה">
+    <md-icon>call_made</md-icon>
+  </md-button-toggle>
+  <md-button-toggle value="{{states.SWITCH_STATION_AND_BACK}}" title="החלף תחנה וחזור לאחר הפרסומות">
+    <md-icon>rotate_right</md-icon>
+  </md-button-toggle>
+  <md-button-toggle value="{{states.PLAYLIST}}" title="השמע רשימת שירים">
+    <md-icon>queue_music</md-icon>
+  </md-button-toggle>
+</md-button-toggle-group>

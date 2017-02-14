@@ -29,7 +29,6 @@ import { routes } from './app.routes';
 /**
  * Import the authentication service to be injected into our component
  */
-import { Authentication } from './services/authentication';
 import {ManagementComponent} from "./components/management/management.component";
 import {FrequenciesService} from "./services/frequencies.service";
 import {SettingsComponent} from "./components/settings/settings.component";
@@ -38,6 +37,9 @@ import {SongsService} from "./services/songs.service";
 import {SongsComponent} from "./components/songs/songs.component";
 import {RecordAdComponent} from "./components/record_ad/record-ad.component";
 import {RecorderComponent} from "./components/ui-components/recorder/recorder.component";
+import {AdStateComponent} from "./components/ui-components/ad_state/ad-state.component";
+import {ManageJsonFileService} from "./services/manage-json-file.service";
+import {ManageMatlabFilesService} from "./services/manage-matlab-files.service";
 
 /*
  * provide('AppStore', { useValue: appStore }),
@@ -52,7 +54,7 @@ import {RecorderComponent} from "./components/ui-components/recorder/recorder.co
         RouterModule.forRoot(routes, { useHash: true }),
         StoreModule.provideStore({ authStore }, { authStore: authInitialState }),
     ],
-    providers: [Authentication, FrequenciesService, SongsService],
+    providers: [FrequenciesService, SongsService, ManageJsonFileService, ManageMatlabFilesService],
     entryComponents: [RecordAdComponent],
     declarations: [
       AppComponent,
@@ -61,9 +63,11 @@ import {RecorderComponent} from "./components/ui-components/recorder/recorder.co
       ManagementComponent,
       EmptyFreqsComponent,
       SongsComponent,
-      RecorderComponent
+      RecorderComponent,
+      AdStateComponent
     ],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
+enableProdMode();
 platformBrowserDynamic().bootstrapModule(AppModule);
