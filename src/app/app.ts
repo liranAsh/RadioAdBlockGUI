@@ -40,6 +40,7 @@ import {RecorderComponent} from "./components/ui-components/recorder/recorder.co
 import {AdStateComponent} from "./components/ui-components/ad_state/ad-state.component";
 import {ManageJsonFileService} from "./services/manage-json-file.service";
 import {ManageMatlabFilesService} from "./services/manage-matlab-files.service";
+import {ReadResponseService} from "./services/read-response.service";
 
 /*
  * provide('AppStore', { useValue: appStore }),
@@ -54,7 +55,13 @@ import {ManageMatlabFilesService} from "./services/manage-matlab-files.service";
         RouterModule.forRoot(routes, { useHash: true }),
         StoreModule.provideStore({ authStore }, { authStore: authInitialState }),
     ],
-    providers: [FrequenciesService, SongsService, ManageJsonFileService, ManageMatlabFilesService],
+    providers: [
+        FrequenciesService,
+        SongsService,
+        ManageJsonFileService,
+        ManageMatlabFilesService,
+        ReadResponseService
+    ],
     entryComponents: [RecordAdComponent],
     declarations: [
       AppComponent,

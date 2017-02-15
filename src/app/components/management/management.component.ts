@@ -1,7 +1,7 @@
 /**
  * Created by Liran on 11/02/2017.
  */
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, OnDestroy} from "@angular/core";
 import {FrequenciesService, SavedFrequency} from "../../services/frequencies.service";
 import {Frequency} from "../../models/frequency";
 import {Router} from "@angular/router";
@@ -13,6 +13,9 @@ import {ManageMatlabFilesService} from "../../services/manage-matlab-files.servi
 import {MatlabTypeEnum} from "../../enums/MatlabType";
 import {SongsService} from "../../services/songs.service";
 import {Song} from "../../models/Song";
+import {Subscription} from "rxjs";
+import {ReadResponseService} from "../../services/read-response.service";
+import {MaofResponse, MaofFrequency} from "../../interfaces/maof-interfaces";
 
 interface AlgorithmData {
   data: SavedFrequency[],
@@ -30,26 +33,30 @@ interface AlgorithmData {
     }  
   `]
 })
-export class ManagementComponent implements OnInit {
+export class ManagementComponent implements OnInit, OnDestroy {
 
   public freqs: Frequency[];
   private playlist: string[];
   public isRunningAlgorithm: boolean;
   public isRunningRecord: boolean;
+  public song: string;
   private isLoadingAlgorithm: boolean;
   private isLoadingRecord: boolean;
   private algorithmAdState: number;
   private isApplicationLoadFreqs: boolean;
   private exec = require("child_process").exec;
+  private resSubscription: Subscription;
 
   constructor(private freqService: FrequenciesService,
               private songsService: SongsService,
+              private readResponseService: ReadResponseService,
               private manageMatlabService: ManageMatlabFilesService,
               private router: Router) {}
 
   public ngOnInit(): void {
 
     this.freqs = [];
+    this.song = "";
     this.isApplicationLoadFreqs = false;
     this.isLoadingAlgorithm = false;
     this.isLoadingRecord = false;
@@ -68,8 +75,28 @@ export class ManagementComponent implements OnInit {
 
     this.songsService.getSongs().then((songs: Song[]) => {
       this.playlist = songs.map((song: Song) => song.path);
-    })
+    });
 
+    // TODO: Implement subscription
+    this.resSubscription =
+        this.readResponseService.onMaofJsonResponseEmit.subscribe((res: MaofResponse) => {
+
+          if (this.isApplicationLoadFreqs) {
+
+            // Loop over freqs array and add frequencies
+            res.data.forEach((freq: MaofFrequency) => {
+              let currFreq: Frequency = this.freqs.find((curr: Frequency) => curr.freq == freq.freq);
+              currFreq.isAdTransmit = freq.isAd;
+              currFreq.isPlay = freq.isPlay;
+            });
+
+            this.song = res.song;
+          }
+        })
+  }
+
+  public ngOnDestroy(): void {
+    this.resSubscription.unsubscribe();
   }
 
   public navigateSettings(): void {
@@ -84,132 +111,114 @@ export class ManagementComponent implements OnInit {
     this.algorithmAdState = Number(output);
   }
 
-  public executeOrKillMatlabFile(isAlgorithm: boolean): void {
+  public executeOrKillMatlabFile(): void {
 
-    this.beforeExecuteCommand(isAlgorithm).then(() => {
+    this.beforeExecuteCommand().then(() => {
 
-      let setRunning: (isRunning: boolean) => void = (isRunning: boolean) => {
-        if (isAlgorithm) {
-          this.isRunningAlgorithm = isRunning;
-        } else {
-          this.isRunningRecord = isRunning;
-        }
-      };
-
-      let setIsLoading: (isLoading: boolean) => void = (isLoading: boolean) => {
-        if (isAlgorithm) {
-          this.isLoadingAlgorithm = isLoading;
-        } else {
-          this.isLoadingRecord = isLoading;
-        }
-      };
-
-      let proc = null;
-      let command: string = this.buildCommand(isAlgorithm);
-      let isRunning: boolean = (isAlgorithm) ?  this.isRunningAlgorithm : this.isRunningRecord;
-
+      let command: string = this.buildCommand();
 
       // Execute
-      if (!isRunning) {
-        setRunning(true);
-        setIsLoading(true);
+      if (!this.isRunningAlgorithm) {
+        this.isRunningAlgorithm = true;
+        this.isLoadingAlgorithm = true;
 
-        proc = this.exec(command, { cwd: 'C:/windows' }, (error, stdout, stderr) => {
+        this.exec(command, { cwd: 'C:/windows' }, (error, stdout, stderr) => {
 
           if (error) {
-            setRunning(false);
-            setIsLoading(false);
+            this.isRunningAlgorithm = false;
+            this.isLoadingAlgorithm = false;
             console.log(error);
             return;
           }
 
-          if (isAlgorithm) {
-            this.manageMatlabService.addTask(MatlabTypeEnum.ALGORITHM).then(() => this.isLoadingAlgorithm = false);
-          } else {
-            this.manageMatlabService.addTask(MatlabTypeEnum.RECORD).then(() => this.isLoadingRecord = false);
-          }
-
-          console.log(proc);
+          this.manageMatlabService.addTask(MatlabTypeEnum.ALGORITHM).then(() => this.isLoadingAlgorithm = false);
         });
       }
       // Kill
       else {
 
-        setIsLoading(true);
-        if (isAlgorithm) {
-          this.manageMatlabService.killTask(MatlabTypeEnum.ALGORITHM).then(() => setIsLoading(false));
-        } else {
-          this.manageMatlabService.killTask(MatlabTypeEnum.RECORD).then(() => setIsLoading(false));
-        }
-
-        setRunning(false);
+        this.isLoadingAlgorithm = true;
+        this.manageMatlabService.killTask(MatlabTypeEnum.ALGORITHM).then(() => this.isLoadingAlgorithm = false);
+        this.isRunningAlgorithm = false;
       }
     });
   }
 
-  // TODO: Implement command
-  private buildCommand(isAlgorithm: boolean): string {
+  private buildCommand(): string {
 
-    let command: string = "";
+    // Get matlab.exe path
+    let matlabPath: string = AppConfig.MATLAB_PATH;
 
-    if (isAlgorithm) {
+    // Flags
+    let flags: string = "-nodisplay -minimize -nosplash -nodesktop -r";
 
-      // Get matlab.exe path
-      let matlabPath: string = AppConfig.MATLAB_PATH;
+    // Get algorithm .m file
+    let algorithmPath: string = AppConfig.ALGO_PATH;
 
-      // Flags
-      let flags: string = "-nodisplay -minimize -nosplash -nodesktop -r";
-
-      // Get algorithm .m file
-      let algorithmPath: string = AppConfig.ALGO_PATH;
-
-      command = "\"" + matlabPath + "\" " + flags + " \"run('" + algorithmPath + "')\"";
-
-    } else {
-
-      // TODO: Implement command for start script of recording
-
-    }
-
-    return command;
+    return "\"" + matlabPath + "\" " + flags + " \"run('" + algorithmPath + "')\"";
   }
 
-  private beforeExecuteCommand(isAlgorithm: boolean): Promise<any> {
+  private beforeExecuteCommand(): Promise<any> {
 
     return new Promise<any>((resolve: any) => {
-      if (isAlgorithm) {
 
-        let data: AlgorithmData = {
-          data: [],
-          adStatus: 0,
-          playlist: this.playlist
-        };
 
-        // Save data from frequency list
-        this.freqs.forEach((freq: Frequency) => {
-          data.data.push({freq: freq.freq, priority: freq.priority});
-        });
+      let data: AlgorithmData = {
+        data: [],
+        adStatus: 0,
+        playlist: this.playlist
+      };
 
-        data.adStatus = this.algorithmAdState;
+      // Save data from frequency list
+      this.freqs.forEach((freq: Frequency) => {
+        data.data.push({freq: freq.freq, priority: freq.priority});
+      });
 
-        console.log(data);
-        resolve();
+      data.adStatus = this.algorithmAdState;
 
-        // Build json file from data
-        let fs = require("fs");
+      console.log(data);
+      resolve();
 
-        fs.writeFile("resources/example_json.json", JSON.stringify(data), (err) => {
-          if (err) {
-            console.log(err);
-          }
-        })
-      }
+      // Build json file from data
+      let fs = require("fs");
 
-      else {
-        resolve();
-      }
+      fs.writeFile("resources/example_json.json", JSON.stringify(data), (err) => {
+        if (err) {
+          console.log(err);
+        }
+      })
     });
+  }
 
+  public startRecord(): void {
 
+    // Set running and loading
+    this.isRunningRecord = true;
+    this.isLoadingRecord = true;
+
+    // Create directory of record
+    let fs = require("fs");
+    fs.mkdir(AppConfig.RECORD_PATH, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      this.isLoadingRecord = false;
+    })
+  }
+
+  public stopRecord(): void {
+
+    // Set running and loading
+    this.isRunningRecord = false;
+    this.isLoadingRecord = true;
+
+    // Create directory of record
+    let fs = require("fs");
+    fs.rmdir(AppConfig.RECORD_PATH, (err) => {
+      if (err) {
+        console.log(err);
+      }
+      this.isLoadingRecord = false;
+    })
   }
 }

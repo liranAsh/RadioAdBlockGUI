@@ -36,8 +36,8 @@ export class ManageJsonFileService {
         });
     }
 
-    public readJsonFile(filename: string): Promise<any> {
-        return new Promise<any>(resolve => {
+    public readJsonFile(filename: string): Promise<JsonFileResult> {
+        return new Promise<JsonFileResult>(resolve => {
 
             this.fs.readFile(filename, "utf8", (err: ErrnoException, data: Buffer) => {
 

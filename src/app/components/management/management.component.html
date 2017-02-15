@@ -22,7 +22,7 @@
       </md-grid-tile>
 
       <md-grid-tile colspan="1">
-        <button md-raised-button color="primary" (click)="executeOrKillMatlabFile(false)" >
+        <button md-raised-button color="primary" (click)="(!isRunningRecord) ? startRecord() : stopRecord()" [disabled]="!isRunningAlgorithm || isLoadingAlgorithm">
           <span *ngIf="!isRunningRecord && !isLoadingRecord">הקלט פרסומת</span>
           <span *ngIf="isRunningRecord && !isLoadingRecord">הפסק</span>
         </button>
@@ -49,7 +49,10 @@
       <md-grid-tile colspan="1">
         <h2>מושמע כעת</h2>
       </md-grid-tile>
-      <md-grid-tile colspan="4">
+      <md-grid-tile colspan="1">
+        <span *ngIf="isRunningAlgorithm && !isLoadingAlgorithm && song">שיר נבחר</span>
+      </md-grid-tile>
+      <md-grid-tile colspan="3">
       </md-grid-tile>
     </md-grid-list>
 
@@ -72,7 +75,10 @@
         <md-icon *ngIf="freqRow.isPlay">volume_up</md-icon>
       </span>
       </md-grid-tile>
-      <md-grid-tile colspan="4">
+      <md-grid-tile colspan="1">
+        <span *ngIf="isRunningAlgorithm && !isLoadingAlgorithm && song">{{song}}</span>
+      </md-grid-tile>
+      <md-grid-tile colspan="3">
       </md-grid-tile>
     </md-grid-list>
 
@@ -83,7 +89,7 @@
       </md-grid-tile>
 
       <md-grid-tile colspan="1">
-        <button md-raised-button color="accent" (click)="executeOrKillMatlabFile(true)">
+        <button md-raised-button color="accent" (click)="executeOrKillMatlabFile()" [disabled]="isRunningRecord">
           <span *ngIf="!isRunningAlgorithm && !isLoadingAlgorithm">הפעל</span>
           <span *ngIf="isRunningAlgorithm && !isLoadingAlgorithm">הפסק</span>
         </button>

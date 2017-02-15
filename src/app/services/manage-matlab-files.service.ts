@@ -57,15 +57,15 @@ export class ManageMatlabFilesService {
 
                 let pidsThatNotInOurTasks: string[] = pids.filter((pid: string) => pidsInTasks.indexOf(pid) === -1);
 
-                // If we found more than one pid that we don't know we throw an error
-                if (pidsThatNotInOurTasks.length > 1) {
-                    throw new Error("There more than one pid of matlab of same type");
-                }
-
-                // If we don't found we throw an error
-                if (pidsThatNotInOurTasks.length === 0) {
-                    throw new Error("There no new pid of matlab");
-                }
+                // // If we found more than one pid that we don't know we throw an error
+                // if (pidsThatNotInOurTasks.length > 1) {
+                //     throw new Error("There more than one pid of matlab of same type");
+                // }
+                //
+                // // If we don't found we throw an error
+                // if (pidsThatNotInOurTasks.length === 0) {
+                //     throw new Error("There no new pid of matlab");
+                // }
 
                 // If we found only one pid then add it to task list
                 this.tasks.push({type: matlabType, pid: pidsThatNotInOurTasks[0]});
