@@ -87,7 +87,7 @@ export class ManageMatlabFilesService {
 
             if (foundTask) {
                 let pid: string = foundTask.pid;
-                let command: string = "taskkill /pid " + foundTask.pid;
+                let command: string = "taskkill /f /pid " + foundTask.pid;
                 this.exec(command, { cwd: '.' }, (error, stdout, stderr) => {
                     let index: number = this.tasks.findIndex((task: Task) => task.pid === pid);
                     this.tasks.splice(index, 1);
