@@ -49,10 +49,7 @@
       <md-grid-tile colspan="1">
         <h2>מושמע כעת</h2>
       </md-grid-tile>
-      <md-grid-tile colspan="1">
-        <span *ngIf="isRunningAlgorithm && !isLoadingAlgorithm && song">שיר נבחר</span>
-      </md-grid-tile>
-      <md-grid-tile colspan="3">
+      <md-grid-tile colspan="4">
       </md-grid-tile>
     </md-grid-list>
 
@@ -75,11 +72,32 @@
         <md-icon *ngIf="freqRow.isPlay">volume_up</md-icon>
       </span>
       </md-grid-tile>
-      <md-grid-tile colspan="1">
-        <span *ngIf="isRunningAlgorithm && !isLoadingAlgorithm && song">{{song}}</span>
+      <md-grid-tile colspan="4">
       </md-grid-tile>
-      <md-grid-tile colspan="3">
+    </md-grid-list>
+
+    <!-- Song title -->
+    <md-grid-list cols="9" rowHeight="50px" dir="rtl" *ngIf="isRunningAlgorithm && !isLoadingAlgorithm && song">
+
+      <md-grid-tile colspan="2">
+        <h2>שיר מתנגן</h2>
       </md-grid-tile>
+
+      <md-grid-tile colspan="7">
+      </md-grid-tile>
+
+    </md-grid-list>
+
+    <!-- Song name -->
+    <md-grid-list cols="9" rowHeight="30px" dir="rtl" *ngIf="isRunningAlgorithm && !isLoadingAlgorithm && song">
+
+      <md-grid-tile colspan="2">
+        {{song}}
+      </md-grid-tile>
+
+      <md-grid-tile colspan="5">
+      </md-grid-tile>
+
     </md-grid-list>
 
     <!-- Start or stop button -->
